@@ -122,12 +122,15 @@ async def google_callback(request: Request):
         service = build('oauth2', 'v2', credentials=flow.credentials)
         user_info = service.userinfo().get().execute()
         
-        # Create user object
+        # Create user object with default settings
         user = {
             "id": user_info['id'],
             "name": user_info['name'],
             "email": user_info['email'],
-            "profile_pic": user_info['picture']
+            "profile_pic": user_info['picture'],
+            "manual_review": True,  # Default setting
+            "response_tone": "professional",  # Default setting
+            "response_length": "medium"  # Default setting
         }
         
         return {"user": user}
