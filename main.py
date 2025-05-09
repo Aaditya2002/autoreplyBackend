@@ -26,7 +26,8 @@ ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 # CORS middleware configuration
 origins = [
     "http://localhost:3000",  # Development frontend
-    "https://your-frontend-domain.com"  # Production frontend - replace with your actual domain
+    "https://email-auto-responder-frontend.vercel.app",  # Production frontend
+    "https://*.vercel.app"  # Allow all Vercel preview deployments
 ]
 
 app.add_middleware(
@@ -48,7 +49,7 @@ SCOPES = [
 
 # Get redirect URI based on environment
 REDIRECT_URI = (
-    "https://your-backend-domain.com/api/auth/google/callback"  # Production
+    "https://email-auto-responder-frontend.vercel.app/auth/callback"  # Production
     if ENVIRONMENT == "production"
     else "http://localhost:3000/auth/callback"  # Development
 )
