@@ -27,7 +27,8 @@ ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 origins = [
     "http://localhost:3000",  # Development frontend
     "https://email-auto-responder-frontend.vercel.app",  # Production frontend
-    "https://*.vercel.app"  # Allow all Vercel preview deployments
+    "https://*.vercel.app",  # Allow all Vercel preview deployments
+    "https://autoreplybackend.onrender.com"  # Backend domain
 ]
 
 app.add_middleware(
@@ -41,6 +42,10 @@ app.add_middleware(
 # Google OAuth2 config
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+
+if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+    raise ValueError("Google OAuth credentials not found in environment variables")
+
 SCOPES = [
     'https://www.googleapis.com/auth/gmail.readonly',
     'https://www.googleapis.com/auth/gmail.send',
@@ -75,18 +80,22 @@ class Settings(BaseModel):
     response_length: str = "medium"
 
 # OAuth2 flow
-flow = Flow.from_client_config(
-    {
-        "web": {
-            "client_id": GOOGLE_CLIENT_ID,
-            "client_secret": GOOGLE_CLIENT_SECRET,
-            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-            "token_uri": "https://oauth2.googleapis.com/token",
-        }
-    },
-    scopes=SCOPES,
-    redirect_uri=REDIRECT_URI
-)
+try:
+    flow = Flow.from_client_config(
+        {
+            "web": {
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+            }
+        },
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI
+    )
+except Exception as e:
+    print(f"Error initializing OAuth flow: {str(e)}")
+    raise
 
 # Dependency to get Gmail service
 async def get_gmail_service(credentials: dict):
@@ -101,11 +110,18 @@ async def health_check():
 # Routes
 @app.get("/api/auth/google")
 async def google_auth():
-    auth_url, _ = flow.authorization_url(
-        access_type='offline',
-        include_granted_scopes='true'
-    )
-    return {"auth_url": auth_url}
+    try:
+        auth_url, _ = flow.authorization_url(
+            access_type='offline',
+            include_granted_scopes='true'
+        )
+        return {"auth_url": auth_url}
+    except Exception as e:
+        print(f"Error generating auth URL: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate Google auth URL: {str(e)}"
+        )
 
 @app.post("/api/auth/google/callback")
 async def google_callback(request: Request):
