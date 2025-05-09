@@ -107,9 +107,14 @@ async def google_auth():
     )
     return {"auth_url": auth_url}
 
-@app.get("/api/auth/google/callback")
-async def google_callback(code: str):
+@app.post("/api/auth/google/callback")
+async def google_callback(request: Request):
     try:
+        body = await request.json()
+        code = body.get('code')
+        if not code:
+            raise HTTPException(status_code=400, detail="Code is required")
+            
         flow.fetch_token(code=code)
         credentials = flow.credentials.to_json()
         
