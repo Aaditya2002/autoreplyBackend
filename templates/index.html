@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center py-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        Welcome to Email Auto-Responder
+    </h1>
+    <p class="text-xl text-gray-600 mb-8">
+        Automate your email responses with AI-powered replies
+    </p>
+    <a href="{{ url_for('login') }}" 
+       class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+        <i class="fab fa-google mr-2"></i>
+        Sign in with Google
+    </a>
+</div>
+
+<div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="text-blue-600 text-2xl mb-4">
+            <i class="fas fa-robot"></i>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">AI-Powered Responses</h3>
+        <p class="text-gray-600">Generate intelligent, context-aware email responses using advanced AI technology.</p>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="text-blue-600 text-2xl mb-4">
+            <i class="fas fa-cog"></i>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Customizable Settings</h3>
+        <p class="text-gray-600">Control your auto-response preferences with easy-to-use settings.</p>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="text-blue-600 text-2xl mb-4">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">Secure & Private</h3>
+        <p class="text-gray-600">Your emails are processed securely with industry-standard encryption.</p>
+    </div>
+</div>
+{% endblock %} 

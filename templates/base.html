@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Email Auto-Responder{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="{{ url_for('index') }}" class="text-xl font-bold text-gray-800">
+                            Email Auto-Responder
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    {% if current_user.is_authenticated %}
+                        <div class="flex items-center space-x-4">
+                            <a href="{{ url_for('dashboard') }}" class="text-gray-600 hover:text-gray-900">
+                                Dashboard
+                            </a>
+                            <a href="{{ url_for('settings') }}" class="text-gray-600 hover:text-gray-900">
+                                Settings
+                            </a>
+                            <div class="flex items-center space-x-2">
+                                <img src="{{ current_user.profile_pic }}" alt="Profile" class="h-8 w-8 rounded-full">
+                                <span class="text-gray-700">{{ current_user.name }}</span>
+                            </div>
+                            <a href="{{ url_for('logout') }}" class="text-red-600 hover:text-red-900">
+                                Logout
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-4 p-4 rounded-md {% if category == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html> 

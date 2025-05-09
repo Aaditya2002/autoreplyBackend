@@ -1,0 +1,22 @@
+[
+  {
+    "question": "What are your parking hours?",
+    "answer": "Our parking lot is open 24 hours a day, 7 days a week for your convenience."
+  },
+  {
+    "question": "How much does parking cost?",
+    "answer": "Our standard rate is $2 per hour, with a daily maximum of $15. Monthly subscriptions are available for $120."
+  },
+  {
+    "question": "What should I do if I lose my parking ticket?",
+    "answer": "If you lose your parking ticket, please visit the office at the exit. A lost ticket fee of $20 applies."
+  },
+  {
+    "question": "Do you offer monthly parking subscriptions?",
+    "answer": "Yes, we offer monthly subscriptions for $120. Please reply to this email or visit our office to sign up."
+  },
+  {
+    "question": "Is the parking lot secure?",
+    "answer": "Our parking lot is monitored by CCTV cameras 24/7 and patrolled regularly by security staff."
+  }
+] 
