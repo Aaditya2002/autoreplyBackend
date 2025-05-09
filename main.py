@@ -114,22 +114,23 @@ async def google_callback(request: Request):
         code = body.get('code')
         if not code:
             raise HTTPException(status_code=400, detail="Code is required")
-            
-        flow.fetch_token(code=code)
-        credentials = flow.credentials.to_json()
         
-        # Get user info
+        # Exchange code for tokens
+        flow.fetch_token(code=code)
+        
+        # Get user info directly from the credentials
         service = build('oauth2', 'v2', credentials=flow.credentials)
         user_info = service.userinfo().get().execute()
         
-        user = User(
-            id=user_info['id'],
-            name=user_info['name'],
-            email=user_info['email'],
-            profile_pic=user_info['picture']
-        )
+        # Create user object
+        user = {
+            "id": user_info['id'],
+            "name": user_info['name'],
+            "email": user_info['email'],
+            "profile_pic": user_info['picture']
+        }
         
-        return {"user": user.dict()}
+        return {"user": user}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
