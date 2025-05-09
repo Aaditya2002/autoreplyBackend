@@ -14,12 +14,24 @@ import json
 # Load environment variables
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(
+    title="Email Auto-Responder API",
+    description="API for automated email responses using AI",
+    version="1.0.0"
+)
 
-# CORS middleware
+# Get environment
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+
+# CORS middleware configuration
+origins = [
+    "http://localhost:3000",  # Development frontend
+    "https://your-frontend-domain.com"  # Production frontend - replace with your actual domain
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,6 +45,13 @@ SCOPES = [
     'https://www.googleapis.com/auth/gmail.send',
     'https://www.googleapis.com/auth/gmail.modify'
 ]
+
+# Get redirect URI based on environment
+REDIRECT_URI = (
+    "https://your-backend-domain.com/api/auth/google/callback"  # Production
+    if ENVIRONMENT == "production"
+    else "http://localhost:3000/auth/callback"  # Development
+)
 
 # Models
 class User(BaseModel):
@@ -65,13 +84,18 @@ flow = Flow.from_client_config(
         }
     },
     scopes=SCOPES,
-    redirect_uri="http://localhost:3000/auth/callback"
+    redirect_uri=REDIRECT_URI
 )
 
 # Dependency to get Gmail service
 async def get_gmail_service(credentials: dict):
     creds = Credentials.from_authorized_user_info(credentials)
     return build('gmail', 'v1', credentials=creds)
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 # Routes
 @app.get("/api/auth/google")
@@ -253,4 +277,5 @@ async def update_settings(settings: Settings):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000) 
+    port = int(os.getenv("PORT", 5000))
+    uvicorn.run(app, host="0.0.0.0", port=port) 
